@@ -12,8 +12,8 @@ const Home: NextPage = () => {
   const toolsQuery = api.tool.getAll.useQuery();
   const getSecretMessageQuery = api.example.getSecretMessage.useQuery();
   const toolMutation = api.tool.create.useMutation({
-    onSuccess: () => {
-      toolsQuery.refetch();
+    onSuccess: async () => {
+      await toolsQuery.refetch();
     },
   });
   const [toolName, setToolName] = useState("");
@@ -95,7 +95,6 @@ const Home: NextPage = () => {
                 name: toolName,
                 url: `${toolName}.com`,
                 description: `This is ${toolName}`,
-                link: `https://${toolName}.com`,
                 image: `https://via.placeholder.com/150`,
               },
             });
