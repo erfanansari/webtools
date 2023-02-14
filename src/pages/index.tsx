@@ -1,13 +1,22 @@
 import { type NextPage } from "next";
+import { signIn, signOut, useSession } from "next-auth/react";
 import Head from "next/head";
 import Link from "next/link";
-import { signIn, signOut, useSession } from "next-auth/react";
 
+import { useState } from "react";
 import { api } from "../utils/api";
 
 const Home: NextPage = () => {
-  const hello = api.example.hello.useQuery({ text: "from tRPC" });
-
+  const helloQuery = api.example.hello.useQuery({ text: "from tRPC" });
+  const getAllQuery = api.example.getAll.useQuery();
+  const toolsQuery = api.tool.getAll.useQuery();
+  const getSecretMessageQuery = api.example.getSecretMessage.useQuery();
+  const toolMutation = api.tool.create.useMutation({
+    onSuccess: () => {
+      toolsQuery.refetch();
+    },
+  });
+  const [toolName, setToolName] = useState("");
   return (
     <>
       <Head>
@@ -44,13 +53,64 @@ const Home: NextPage = () => {
               </div>
             </Link>
           </div>
-          <div className="flex flex-col items-center gap-2">
-            <p className="text-2xl text-white">
-              {hello.data ? hello.data.greeting : "Loading tRPC query..."}
+          <div className="flex flex-col items-center gap-2 text-white">
+            <p className="text-2xl">
+              {helloQuery.isLoading
+                ? "Loading tRPC query..."
+                : helloQuery.data?.greeting}{" "}
+              {helloQuery.data?.date.toLocaleDateString("en-US")}
             </p>
+            <ul>
+              {getAllQuery.data?.length === 0
+                ? "No data yet"
+                : getAllQuery.data?.map((item) => (
+                    <li key={item.id}>{item?.createdAt.toISOString()}</li>
+                  ))}
+            </ul>
+            <ul>
+              {toolsQuery.data?.length === 0
+                ? "No tool yet"
+                : toolsQuery.data?.map((item) => (
+                    <li key={item.id}>
+                      Name: {item.name}
+                      <br />
+                      URL: {item.url}
+                      <br />
+                      Description: {item.description}
+                      <br />
+                      Created At: {item?.createdAt.toISOString()}
+                    </li>
+                  ))}
+            </ul>
+            <p>{getSecretMessageQuery.data ?? "No message for you"}</p>
             <AuthShowcase />
           </div>
         </div>
+        <form
+          className="text-white"
+          onSubmit={(e) => {
+            e.preventDefault();
+            toolMutation.mutate({
+              data: {
+                name: toolName,
+                url: `${toolName}.com`,
+                description: `This is ${toolName}`,
+                link: `https://${toolName}.com`,
+                image: `https://via.placeholder.com/150`,
+              },
+            });
+          }}
+        >
+          <input
+            type="text"
+            value={toolName}
+            onChange={(e) => setToolName(e.target.value)}
+            className="text-[royalblue]"
+          />
+          <button>
+            {toolMutation.isLoading ? "Loading..." : "Create Tool"}
+          </button>
+        </form>
       </main>
     </>
   );
@@ -63,9 +123,10 @@ const AuthShowcase: React.FC = () => {
 
   const { data: secretMessage } = api.example.getSecretMessage.useQuery(
     undefined, // no input
-    { enabled: sessionData?.user !== undefined },
+    { enabled: sessionData?.user !== undefined }
   );
 
+  console.log(sessionData);
   return (
     <div className="flex flex-col items-center justify-center gap-4">
       <p className="text-center text-2xl text-white">
