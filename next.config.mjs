@@ -20,5 +20,13 @@ const config = {
     locales: ["en"],
     defaultLocale: "en",
   },
+  images: {
+    domains: [
+      "avatars.githubusercontent.com",
+      "images.unsplash.com",
+      // "picsum.photos",
+      "random.imagecdn.app",
+    ],
+  },
 };
 export default config;
