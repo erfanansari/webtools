@@ -108,3 +108,6 @@ img {
     background: black;
   }
 } */
+.link {
+  @apply border-t-2 border-b-2 border-transparent pb-[6px] text-neutral-light transition-all hover:border-b-primary-main;
+}

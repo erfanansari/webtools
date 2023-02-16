@@ -3,10 +3,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { IoLogoGithub } from "react-icons/io5";
+import { twMerge } from "tailwind-merge";
 import { useScrollDir } from "../hooks/useScrollDir";
-
-const linkClasses =
-  "text-neutral-light border-transparent border-t-2 transition-all border-b-2 pb-[6px] hover:border-b-primary-main";
 
 interface Props {
   query: string;
@@ -33,13 +31,10 @@ const Header: React.FC<Props> = ({ query, setQuery }) => {
 
   return (
     <header
-      className={`
-            ${
-              scrollDir === "scrolling down"
-                ? "-translate-y-full"
-                : "translate-y-0"
-            }
-            fixed top-0 z-10 w-full bg-secondary-main text-white transition-transform duration-300`}
+      className={twMerge(
+        "fixed top-0 z-10 w-full bg-secondary-main text-white transition-transform duration-300",
+        scrollDir === "scrolling down" ? "-translate-y-full" : "translate-y-0"
+      )}
     >
       <div className="custom-container flex h-20 items-center justify-between md:h-24">
         <Link href="/" className="text-white">
@@ -57,19 +52,20 @@ const Header: React.FC<Props> = ({ query, setQuery }) => {
         {router.pathname === "/home" && (
           <input
             {...inputProps}
-            className={[
+            className={twMerge(
               inputProps.className,
-              "hidden py-[.25rem] md:w-36 2md:block lg:w-52",
-            ].join(" ")}
+              "hidden py-[.25rem] md:w-36 2md:block lg:w-52"
+            )}
           />
         )}
         <div className="ml-auto mt-[6px] flex">
           {isAdmin && (
             <Link href="/admin">
               <p
-                className={`hidden sm:mr-4 2md:block lg:mr-8 ${linkClasses} ${
-                  router.pathname === "/admin" ? "border-b-primary-main" : ""
-                }`}
+                className={twMerge(
+                  "link hidden sm:mr-4 2md:block lg:mr-8",
+                  router.pathname === "/admin" && "border-b-primary-main"
+                )}
               >
                 Admin
               </p>
@@ -77,9 +73,10 @@ const Header: React.FC<Props> = ({ query, setQuery }) => {
           )}
           <Link href="/bookmarks">
             <p
-              className={`hidden sm:mr-4 2md:block lg:mr-8 ${linkClasses} ${
-                router.pathname === "/bookmarks" ? "border-b-primary-main" : ""
-              }`}
+              className={twMerge(
+                "link hidden sm:mr-4 2md:block lg:mr-8",
+                router.pathname === "/bookmarks" && "border-b-primary-main"
+              )}
             >
               Bookmarks
             </p>
@@ -123,9 +120,10 @@ const Header: React.FC<Props> = ({ query, setQuery }) => {
         <div className="mt-[3px]">
           <Link href="/bookmarks">
             <p
-              className={`${linkClasses} mr-1 md:mr-8 ${
-                router.pathname === "/bookmarks" ? "border-b-primary-main" : ""
-              }`}
+              className={twMerge(
+                "link mr-1 md:mr-8",
+                router.pathname === "/bookmarks" && "border-b-primary-main"
+              )}
             >
               Bookmarks
             </p>
@@ -133,9 +131,10 @@ const Header: React.FC<Props> = ({ query, setQuery }) => {
           {isAdmin && (
             <Link href="/admin">
               <p
-                className={`${linkClasses} ml-2 ${
-                  router.pathname === "/admin" ? "border-b-primary-main" : ""
-                }`}
+                className={twMerge(
+                  "link ml-2",
+                  router.pathname === "/admin" && "border-b-primary-main"
+                )}
               >
                 Admin
               </p>
@@ -145,8 +144,9 @@ const Header: React.FC<Props> = ({ query, setQuery }) => {
         {router.pathname === "/" && (
           <input
             {...inputProps}
-            className={[inputProps.className, "w-40 py-[.25rem] sm:w-52"].join(
-              " "
+            className={twMerge(
+              inputProps.className,
+              "w-40 py-[.25rem] sm:w-52"
             )}
           />
         )}
