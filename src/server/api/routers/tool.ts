@@ -1,10 +1,52 @@
 import { z } from "zod";
+import { tagEnum } from "../../../utils/constants";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 
 export const toolRouter = createTRPCRouter({
-  getAll: publicProcedure.query(({ ctx }) => {
-    return ctx.prisma.tool.findMany();
-  }),
+  getAll: publicProcedure
+    .input(
+      z.object({
+        limit: z.number().min(1).max(100).nullish(),
+        cursor: z.number().nullish(),
+        query: z.string().nullish(),
+        tag: tagEnum,
+      })
+    )
+    .query(({ ctx, input }) => {
+      const limit = input?.limit ?? 10;
+      const cursor = input?.cursor ?? 1;
+
+      const skip = (cursor - 1) * limit;
+
+      const where = {
+        name: {
+          contains: input?.query ?? "",
+        },
+        tag: {
+          equals: input?.tag === "All" ? undefined : input?.tag ?? "",
+        },
+      };
+      const tools = ctx.prisma.tool.findMany({
+        take: limit,
+        skip,
+        where,
+        orderBy: { id: "asc" },
+      });
+
+      const count = ctx.prisma.tool.count({
+        where,
+      });
+
+      return Promise.all([tools, count]).then(([tools, count]) => ({
+        tools,
+        info: {
+          count,
+          pages: Math.ceil(count / limit),
+          next: count - skip > limit ? cursor + 1 : null,
+          prev: cursor > 1 ? cursor - 1 : null,
+        },
+      }));
+    }),
 
   create: protectedProcedure
     .input(
@@ -14,7 +56,7 @@ export const toolRouter = createTRPCRouter({
           description: z.string(),
           url: z.string(),
           image: z.string(),
-          // tags: z.array(z.string()),
+          tag: tagEnum,
           // bookmarked: z.boolean(),
         }),
       })

@@ -72,7 +72,7 @@ img {
 
 @layer components {
   .btn-primary {
-    @apply h-10 rounded-3xl bg-primary-main px-4 text-white transition-all hover:bg-primary-dark hover:text-gray-300 disabled:bg-neutral-dark disabled:text-gray-300;
+    @apply h-10 rounded-3xl bg-primary-main px-4 text-white transition-all hover:bg-primary-dark disabled:bg-neutral-dark disabled:text-gray-300;
   }
   .btn-secondary {
     @apply rounded-full border border-neutral-dark px-12 py-2 text-xl font-medium text-secondary-dark disabled:border-gray-400 disabled:text-gray-400;

@@ -19,17 +19,16 @@ model Example {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 }
-
 model Tool {
     id          String   @id @default(cuid())
     createdAt   DateTime @default(now())
     updatedAt   DateTime @updatedAt
     name        String
-    url         String
+    url         String   @unique
     description String
     image       String
     bookmarked  Boolean? @default(false)
-    // tags      String[] https://stackoverflow.com/questions/72237109/prisma-sqlite-list
+    tag         String   @default("Other")
 }
 
 // Necessary for Next auth

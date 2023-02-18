@@ -71,7 +71,13 @@ const Header: React.FC<Props> = ({ query, setQuery }) => {
               </p>
             </Link>
           )}
-          <Link href="/bookmarks">
+          <Link
+            href="/bookmarks"
+            onClick={(e) => {
+              e.preventDefault();
+              alert("Functionality not yet implemented");
+            }}
+          >
             <p
               className={twMerge(
                 "link hidden sm:mr-4 2md:block lg:mr-8",
