@@ -1,3 +1,4 @@
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
@@ -80,7 +81,7 @@ const Header: React.FC<Props> = ({ query, setQuery }) => {
           >
             <p
               className={twMerge(
-                "link hidden sm:mr-4 2md:block lg:mr-8",
+                "link mr-4 hidden 2md:block",
                 router.pathname === "/bookmarks" && "border-b-primary-main"
               )}
             >
@@ -90,26 +91,49 @@ const Header: React.FC<Props> = ({ query, setQuery }) => {
         </div>
         <div className="min-w-[150px] sm:min-w-[200px]">
           {sessionData ? (
-            <div>
-              <div className="flex items-center justify-center">
-                <button
-                  onClick={() => void signOut()}
-                  className="btn-primary mx-auto mr-4 flex items-center"
-                >
-                  <p>Log out</p>
+            <DropdownMenu.Root>
+              <DropdownMenu.Trigger asChild>
+                <button className="mx-auto flex cursor-pointer items-center justify-center">
+                  <h1 className="mr-4 cursor-default">
+                    {sessionData?.user.name}
+                  </h1>
+                  <Image
+                    className="rounded-full"
+                    src={sessionData?.user.image || ""}
+                    width={40}
+                    height={40}
+                    alt="profile"
+                  />
                 </button>
-                <h1 className="mr-4 cursor-default">
-                  {sessionData?.user.name}
-                </h1>
-                <Image
-                  className="rounded-full"
-                  src={sessionData?.user.image || ""}
-                  width={40}
-                  height={40}
-                  alt="profile"
-                />
-              </div>
-            </div>
+              </DropdownMenu.Trigger>
+
+              <DropdownMenu.Portal>
+                <DropdownMenu.Content
+                  sideOffset={20}
+                  align="end"
+                  side="bottom"
+                  className={twMerge(
+                    `min-w-220 rounded-6 animate-duration-400 animate-ease-out
+                  ml-auto w-8/12 transform space-y-4 rounded-b-lg bg-white p-5 px-4 opacity-100
+                  shadow-md data-[side='bottom']:animate-slideDownAndFade`
+                  )}
+                >
+                  <DropdownMenu.Item className="select-none text-sm outline-none">
+                    <p className="mr-4 cursor-default">
+                      Logged in as {sessionData?.user.email}
+                    </p>
+                  </DropdownMenu.Item>
+                  <DropdownMenu.Item className="select-none text-sm outline-none">
+                    <button
+                      onClick={() => void signOut()}
+                      className="btn-primary"
+                    >
+                      <p>Log out</p>
+                    </button>
+                  </DropdownMenu.Item>
+                </DropdownMenu.Content>
+              </DropdownMenu.Portal>
+            </DropdownMenu.Root>
           ) : (
             <button
               onClick={() => void signIn()}

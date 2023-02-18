@@ -6,6 +6,7 @@ module.exports = {
       animation: {
         fade: "fade 0.3s ease-in-out",
         bookmark: "bookmark 0.25s cubic-bezier(0, 0, 0.2, 1)",
+        slideDownAndFade: "slideDownAndFade 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
       },
       keyframes: {
         fade: {
@@ -16,6 +17,16 @@ module.exports = {
           "0%": { transform: "scale(1)" },
           "75%": { transform: "scale(1.2)" },
           "100%": { transform: "scale(1)" },
+        },
+        slideDownAndFade: {
+          from: {
+            opacity: 0,
+            transform: "translateY(-2px)",
+          },
+          to: {
+            opacity: 1,
+            transform: "translateY(0)",
+          },
         },
       },
       screens: {
