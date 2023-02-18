@@ -7,7 +7,7 @@ import { MdOutgoingMail } from "react-icons/md";
 const Footer: React.FC = () => {
   return (
     <footer
-      className="mt-24 rounded-t-3xl text-white"
+      className="mt-24 text-white"
       style={{
         background:
           "linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(24,78,89,1) 100%)",
@@ -23,14 +23,7 @@ const Footer: React.FC = () => {
         <div className="flex items-center">
           <h2 className="cursor-default text-sm">
             Created with{" "}
-            <IoHeart
-              className="text-red-500"
-              style={{
-                display: "inline-block",
-              }}
-              size={17}
-            />{" "}
-            By{" "}
+            <IoHeart className="inline-block text-red-500" size={17} /> By{" "}
             <a
               href="https://twitter.com/eansarimehr"
               target="_blank"
@@ -44,7 +37,7 @@ const Footer: React.FC = () => {
         <div className="flex items-center">
           <a
             href="mailto:dev.erfanansari@gmai.com"
-            className="text-3xl"
+            className="text-3xl transition-all hover:scale-110"
             target="_blank"
             rel="noreferrer"
           >
@@ -52,7 +45,7 @@ const Footer: React.FC = () => {
           </a>
           <a
             href="https://twitter.com/eansarimehr"
-            className="ml-5 text-3xl"
+            className="ml-5 text-3xl transition-all hover:scale-110"
             target="_blank"
             rel="noreferrer"
           >
@@ -60,7 +53,7 @@ const Footer: React.FC = () => {
           </a>
           <a
             href="https://t.me/eansarimehr"
-            className="ml-5 text-3xl"
+            className="ml-5 text-3xl transition-all hover:scale-110"
             target="_blank"
             rel="noreferrer"
           >

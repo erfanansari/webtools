@@ -114,7 +114,7 @@ const Home: NextPage = () => {
               </button>
             ))}
           </div>
-          <div className="row-span-5 mt-8 grid gap-8 pb-8 sm:mt-14 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-8 grid gap-8 pb-8 sm:mt-14 sm:grid-cols-2 lg:grid-cols-3">
             {toolsQuery.data?.pages.map((page) => (
               <Fragment key={page.info.next}>
                 {page.tools.map((tool, i) => (

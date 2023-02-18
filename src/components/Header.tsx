@@ -94,9 +94,7 @@ const Header: React.FC<Props> = ({ query, setQuery }) => {
             <DropdownMenu.Root>
               <DropdownMenu.Trigger asChild>
                 <button className="mx-auto flex cursor-pointer items-center justify-center">
-                  <h1 className="mr-4 cursor-default">
-                    {sessionData?.user.name}
-                  </h1>
+                  <h1 className="mr-4">{sessionData?.user.name}</h1>
                   <Image
                     className="rounded-full"
                     src={sessionData?.user.image || ""}
@@ -119,7 +117,7 @@ const Header: React.FC<Props> = ({ query, setQuery }) => {
                   )}
                 >
                   <DropdownMenu.Item className="select-none text-sm outline-none">
-                    <p className="mr-4 cursor-default">
+                    <p className="mr-4">
                       Logged in as {sessionData?.user.email}
                     </p>
                   </DropdownMenu.Item>
