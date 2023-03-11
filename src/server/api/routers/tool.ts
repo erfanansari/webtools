@@ -9,6 +9,7 @@ export const toolRouter = createTRPCRouter({
         limit: z.number().min(1).max(100).nullish(),
         cursor: z.number().nullish(),
         query: z.string().nullish(),
+        bookmarked: z.boolean().nullish(),
         tag: tagEnum,
       })
     )
@@ -24,6 +25,9 @@ export const toolRouter = createTRPCRouter({
         },
         tag: {
           equals: input?.tag === "All" ? undefined : input?.tag ?? "",
+        },
+        bookmarked: {
+          equals: input?.bookmarked ?? undefined,
         },
       };
       const tools = ctx.prisma.tool.findMany({
@@ -57,7 +61,7 @@ export const toolRouter = createTRPCRouter({
           url: z.string(),
           image: z.string(),
           tag: tagEnum,
-          // bookmarked: z.boolean(),
+          bookmarked: z.boolean().nullish(),
         }),
       })
     )

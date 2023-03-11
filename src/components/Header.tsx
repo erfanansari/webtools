@@ -4,15 +4,23 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { IoLogoGithub } from "react-icons/io5";
+import { toast } from "react-toastify";
 import { twMerge } from "tailwind-merge";
 import { useScrollDir } from "../hooks/useScrollDir";
 
 interface Props {
   query: string;
   setQuery: React.Dispatch<React.SetStateAction<string>>;
+  shouldBeBookmarked: boolean;
+  setShouldBeBookmarked: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const Header: React.FC<Props> = ({ query, setQuery }) => {
+const Header: React.FC<Props> = ({
+  query,
+  setQuery,
+  shouldBeBookmarked,
+  setShouldBeBookmarked,
+}) => {
   const router = useRouter();
   useScrollDir();
   const { scrollDir } = useScrollDir();
@@ -21,7 +29,7 @@ const Header: React.FC<Props> = ({ query, setQuery }) => {
     value: query,
     onChange: (e: React.ChangeEvent<HTMLInputElement>) =>
       setQuery(e.target.value),
-    placeholder: "Search Tools...",
+    placeholder: `Search ${shouldBeBookmarked ? "Bookmarked" : "All"} Tools...`,
     type: "search",
     className:
       "rounded-full border ml-2 md:ml-8 text-secondary-dark px-4 outline-primary-main",
@@ -30,6 +38,7 @@ const Header: React.FC<Props> = ({ query, setQuery }) => {
   const { data: sessionData } = useSession();
   const isAdmin = sessionData?.user.role === "ADMIN";
 
+  console.log(shouldBeBookmarked);
   return (
     <header
       className={twMerge(
@@ -50,12 +59,12 @@ const Header: React.FC<Props> = ({ query, setQuery }) => {
             <h1 className="ml-2 text-3xl font-bold">WebTools</h1>
           </div>
         </Link>
-        {router.pathname === "/home" && (
+        {router.pathname === "/" && (
           <input
             {...inputProps}
             className={twMerge(
               inputProps.className,
-              "hidden py-[.25rem] md:w-36 2md:block lg:w-52"
+              "hidden py-[.25rem] transition-all md:w-36 2md:block lg:w-60 lg:focus:w-80"
             )}
           />
         )}
@@ -72,22 +81,20 @@ const Header: React.FC<Props> = ({ query, setQuery }) => {
               </p>
             </Link>
           )}
-          <Link
-            href="/bookmarks"
-            onClick={(e) => {
-              e.preventDefault();
-              alert("Functionality not yet implemented");
+          <button
+            className={twMerge(
+              "link mr-4 hidden 2md:block",
+              shouldBeBookmarked && "!border-b-primary-main"
+            )}
+            onClick={() => {
+              setShouldBeBookmarked(!shouldBeBookmarked);
+              toast.info(
+                `Search on ${shouldBeBookmarked ? "all" : "bookmarked"} tools`
+              );
             }}
           >
-            <p
-              className={twMerge(
-                "link mr-4 hidden 2md:block",
-                router.pathname === "/bookmarks" && "border-b-primary-main"
-              )}
-            >
-              Bookmarks
-            </p>
-          </Link>
+            Bookmark
+          </button>
         </div>
         <div className="min-w-[150px] sm:min-w-[200px]">
           {sessionData ? (
@@ -146,16 +153,20 @@ const Header: React.FC<Props> = ({ query, setQuery }) => {
       </div>
       <div className="mx-6 flex justify-between pb-4 2md:hidden">
         <div className="mt-[3px]">
-          <Link href="/bookmarks">
-            <p
-              className={twMerge(
-                "link mr-1 md:mr-8",
-                router.pathname === "/bookmarks" && "border-b-primary-main"
-              )}
-            >
-              Bookmarks
-            </p>
-          </Link>
+          <button
+            className={twMerge(
+              "link mr-4 hidden 2md:block",
+              shouldBeBookmarked && "!border-b-primary-main"
+            )}
+            onClick={() => {
+              setShouldBeBookmarked(!shouldBeBookmarked);
+              toast.info(
+                `Search on ${shouldBeBookmarked ? "all" : "bookmarked"} tools`
+              );
+            }}
+          >
+            Bookmark
+          </button>
           {isAdmin && (
             <Link href="/admin">
               <p

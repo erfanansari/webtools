@@ -8,6 +8,8 @@ interface Props extends React.PropsWithChildren {
   description?: string;
   query: string;
   setQuery: React.Dispatch<React.SetStateAction<string>>;
+  shouldBeBookmarked: boolean;
+  setShouldBeBookmarked: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const Layout: React.FC<Props> = ({
@@ -17,6 +19,8 @@ const Layout: React.FC<Props> = ({
   children,
   query,
   setQuery,
+  shouldBeBookmarked,
+  setShouldBeBookmarked,
 }) => {
   return (
     <div className="flex min-h-[100vh] flex-col justify-between">
@@ -25,7 +29,12 @@ const Layout: React.FC<Props> = ({
         <meta name="keywords" content={keywords} />
         <meta name="description" content={description} />
       </Head>
-      <Header query={query} setQuery={setQuery} />
+      <Header
+        query={query}
+        setQuery={setQuery}
+        shouldBeBookmarked={shouldBeBookmarked}
+        setShouldBeBookmarked={setShouldBeBookmarked}
+      />
       <main className="custom-container pt-32 md:pt-24">{children}</main>
       <Footer />
     </div>
