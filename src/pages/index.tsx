@@ -30,7 +30,7 @@ const Home: NextPage = () => {
       limit: 3,
       query: query,
       tag,
-      bookmarked: shouldBeBookmarked,
+      bookmarked: shouldBeBookmarked ? true : undefined,
     },
     {
       getNextPageParam: (lastPage) => lastPage.info.next ?? undefined,
@@ -38,10 +38,9 @@ const Home: NextPage = () => {
     }
   );
 
-  const bookmarkIconProps = {
-    size: 22,
-    className: `cursor-pointer animate-bookmark`,
-  };
+  const context = api.useContext();
+
+  const toolUpdateMutation = api.tool.update.useMutation();
 
   return (
     <Layout
@@ -96,75 +95,123 @@ const Home: NextPage = () => {
             ))}
           </div>
           <div className="mt-8 grid gap-8 pb-8 sm:mt-14 sm:grid-cols-2 lg:grid-cols-3">
-            {toolsQuery.data?.pages.map((page) => (
-              <Fragment key={page.info.next}>
-                {page.tools.map((tool, i) => (
-                  <div
-                    key={tool.id}
-                    className={twMerge(
-                      "flex w-full flex-col justify-between overflow-hidden rounded-2xl bg-white shadow-cart md:w-full",
-                      fade && page.info.prev ? "animate-fade" : ""
-                    )}
-                    style={{
-                      // Safari hack to fix border radius bug around images
-                      WebkitBackfaceVisibility: "hidden",
-                      MozBackfaceVisibility: "hidden",
-                      WebkitTransform: "translate3d(0, 0, 0)",
-                      // @ts-expect-error - this is a valid property
-                      MozTransform: "translate3d(0, 0, 0)",
-                    }}
-                  >
-                    <div>
-                      <div className="relative h-[192px] overflow-hidden">
-                        <Image
-                          src={`https://random.imagecdn.app/500/${i + 5}50/`}
-                          alt={tool.name}
-                          className="object-cover transition duration-300 hover:scale-125"
-                          fill
-                        />
-                      </div>
-                      <div className="px-6">
-                        <div className="flex items-center justify-between text-secondary-main opacity-[.4]">
-                          <p className="my-4">{formatDate(tool.createdAt)}</p>
-                          <button
-                            onClick={() => {
-                              toast.warn("This feature is not available yet");
+            {toolsQuery.data?.pages[0]?.info.count === 0 ? (
+              <h1 className="w-max text-3xl">
+                No tools found. Try searching for something else.
+              </h1>
+            ) : (
+              toolsQuery.data?.pages.map((page) => (
+                <Fragment key={page.info.next}>
+                  {page.tools.map((tool, i) => (
+                    <div
+                      key={tool.id}
+                      className={twMerge(
+                        "flex w-full flex-col justify-between overflow-hidden rounded-2xl bg-white shadow-cart md:w-full",
+                        fade && page.info.prev ? "animate-fade" : ""
+                      )}
+                      style={{
+                        // Safari hack to fix border radius bug around images
+                        WebkitBackfaceVisibility: "hidden",
+                        MozBackfaceVisibility: "hidden",
+                        WebkitTransform: "translate3d(0, 0, 0)",
+                        // @ts-expect-error - this is a valid property
+                        MozTransform: "translate3d(0, 0, 0)",
+                      }}
+                    >
+                      <div>
+                        <div className="relative h-[192px] overflow-hidden">
+                          <Image
+                            src={`https://random.imagecdn.app/500/${i + 5}50/`}
+                            alt={tool.name}
+                            className="object-cover transition duration-300 hover:scale-125"
+                            fill
+                          />
+                        </div>
+                        <div className="px-6">
+                          <div className="flex items-center justify-between text-secondary-main opacity-[.4]">
+                            <p className="my-4">{formatDate(tool.createdAt)}</p>
+                            <button>
+                              {tool.bookmarked ? (
+                                <IoBookmark
+                                  size={22}
+                                  className="animate-bookmark cursor-pointer"
+                                  onClick={() => {
+                                    toolUpdateMutation.mutate(
+                                      {
+                                        id: tool.id,
+                                        data: {
+                                          bookmarked: false,
+                                        },
+                                      },
+                                      {
+                                        onSuccess: () => {
+                                          void context.tool.invalidate();
+                                          toast.success(
+                                            "Removed from bookmarks"
+                                          );
+                                        },
+                                        onError: (err) => {
+                                          toast.error(err.message);
+                                        },
+                                      }
+                                    );
+                                  }}
+                                />
+                              ) : (
+                                <IoBookmarkOutline
+                                  size={22}
+                                  className="animate-bookmark cursor-pointer"
+                                  onClick={() => {
+                                    toolUpdateMutation.mutate(
+                                      {
+                                        id: tool.id,
+                                        data: {
+                                          bookmarked: true,
+                                        },
+                                      },
+                                      {
+                                        onSuccess: () => {
+                                          void context.tool.invalidate();
+                                          toast.success("Added to bookmarks");
+                                        },
+                                        onError: (err) => {
+                                          toast.error(err.message);
+                                        },
+                                      }
+                                    );
+                                  }}
+                                />
+                              )}
+                            </button>
+                          </div>
+                          <h2
+                            id={tool.id}
+                            className="mb-4 text-2xl font-semibold transition-colors"
+                            style={{
+                              scrollMarginTop: "700px",
                             }}
                           >
-                            {tool.bookmarked ? (
-                              <IoBookmark {...bookmarkIconProps} />
-                            ) : (
-                              <IoBookmarkOutline {...bookmarkIconProps} />
-                            )}
-                          </button>
+                            <Link href={tool.id}>{tool.name}</Link>
+                          </h2>
+                          <p className="mb-4 max-h-[70px] min-h-[70px] overflow-hidden text-ellipsis whitespace-normal text-secondary-main">
+                            {tool.description}
+                          </p>
                         </div>
-                        <h2
-                          id={tool.id}
-                          className="mb-4 text-2xl font-semibold transition-colors"
-                          style={{
-                            scrollMarginTop: "700px",
-                          }}
-                        >
-                          <Link href={tool.id}>{tool.name}</Link>
-                        </h2>
-                        <p className="mb-4 max-h-[70px] min-h-[70px] overflow-hidden text-ellipsis whitespace-normal text-secondary-main">
-                          {tool.description}
-                        </p>
                       </div>
+                      <Link
+                        target="_blank"
+                        href={tool.url}
+                        rel="noreferrer"
+                        className="btn-primary m-6 mt-0 flex max-w-fit items-center"
+                      >
+                        Learn more
+                        <IoChevronForward size={18} className="ml-2" />
+                      </Link>
                     </div>
-                    <Link
-                      target="_blank"
-                      href={tool.url}
-                      rel="noreferrer"
-                      className="btn-primary m-6 mt-0 flex max-w-fit items-center"
-                    >
-                      Learn more
-                      <IoChevronForward size={18} className="ml-2" />
-                    </Link>
-                  </div>
-                ))}
-              </Fragment>
-            ))}
+                  ))}
+                </Fragment>
+              ))
+            )}
           </div>
           {toolsQuery.hasNextPage && (
             <button

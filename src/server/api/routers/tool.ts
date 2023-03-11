@@ -71,4 +71,22 @@ export const toolRouter = createTRPCRouter({
       });
       return tool;
     }),
+  update: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        data: z.object({
+          bookmarked: z.boolean(),
+        }),
+      })
+    )
+    .mutation(async ({ ctx, input: { id, data } }) => {
+      const tool = await ctx.prisma.tool.update({
+        where: {
+          id,
+        },
+        data,
+      });
+      return tool;
+    }),
 });
