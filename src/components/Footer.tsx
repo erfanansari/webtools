@@ -3,6 +3,8 @@ import Link from "next/link";
 import { IoHeart, IoLogoTwitter } from "react-icons/io5";
 import { FaTelegramPlane } from "react-icons/fa";
 import { MdOutgoingMail } from "react-icons/md";
+import { SiGmail } from "react-icons/si";
+import { CgMail } from "react-icons/cg";
 
 const Footer: React.FC = () => {
   return (
@@ -41,7 +43,7 @@ const Footer: React.FC = () => {
             target="_blank"
             rel="noreferrer"
           >
-            <MdOutgoingMail />
+            <SiGmail />
           </a>
           <a
             href="https://twitter.com/eansarimehr"
